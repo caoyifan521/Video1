@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lisa.dao.speakerDao">
+
+    <select id="findAll"  resultType="speaker">
+        select * from speaker
+    </select>
+    <select id="findAll2"  resultType="speaker">
+        select * from speaker
+    </select>
+    <insert id="add" parameterType="speaker">
+        insert into speaker(speakerName,speakerDesc,speakerjob,headImgUrl)
+        values (#{speakerName},#{speakerDesc},#{speakerjob},#{headImgUrl})
+    </insert>
+    <select id="queryById" parameterType="int" resultType="speaker">
+        select * from speaker where id=#{id}
+    </select>
+    <update id="update" parameterType="speaker">
+         update speaker set speakerName=#{speakerName},speakerDesc=#{speakerDesc},
+         speakerjob=#{speakerjob},headImgUrl=#{headImgUrl} where id=#{id}
+    </update>
+    <delete id="deleteById" parameterType="int">
+        delete from speaker where id=#{id}
+    </delete>
+</mapper>

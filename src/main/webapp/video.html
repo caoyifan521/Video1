@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <link rel="stylesheet" href="layui/css/layui.css" />
+    <script type="text/javascript" src="layui/layui.js" ></script>
+    <script type="text/javascript" src="js/jquery-1.12.2.min.js" ></script>
+    <style type="text/css">
+        #content{
+            margin:20px;
+            float: right;
+        }
+        hr {
+            margin: 0 auto;
+            border: 0;
+            height: 4px;
+            background: #333;
+            background-image: linear-gradient(to right, red, #333, rgb(9, 206, 91));
+        }
+
+        h2 {
+            text-align: center;
+            margin: 30px;
+            color: orangered;
+            font-size: 40px;
+            font-family: 幼圆;
+        }
+
+        #id2{
+
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+    </style>
+</head>
+<body class="layui-layout-body">
+<div>
+    <h2>视频管理</h2>
+    <div class="layui-form searchDiv" id="id2">
+
+
+        <button id="btn" class="layui-btn" type="button">
+            批量删除 <span class="badge" id="delNum"></span>
+        </button>
+
+        <div class="layui-inline">
+            <div class="layui-input-inline">
+                <select name="courseTitle" lay-verify="required" id="cid">
+                    <option value="">按照课目查询</option>
+                </select>
+            </div>
+
+            <div class="layui-inline">
+                <div class="layui-input-inline">
+                    <select name="speakerName" lay-verify="required" id="sid">
+                        <option value="">按照老师查询</option>
+                    </select>
+                </div>
+            </div>
+
+
+            <div class="layui-inline">
+                <div class="layui-input-inline">
+                    <input type="text" name="title" id="tid" lay-verify="text" placeholder="请输入" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+
+
+            <button type="button" class="layui-btn" data-type="reload">搜索</button>
+        </div>
+
+    </div>
+</div>
+
+<hr>
+<table class="layui-hide layui-l" id="demo" lay-filter="test"></table>
+<hr>
+<div id="content" ><button type="button" class="layui-btn" onclick="add()">添加</button></div>
+
+<script type="text/html" id="barDemo">
+
+    <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+</script>
+<script>
+    layui.use(['laydate', 'laypage', 'layer', 'table', 'carousel', 'upload', 'element', 'slider'], function(){
+        var laydate = layui.laydate //日期
+            ,laypage = layui.laypage //分页
+            ,layer = layui.layer //弹层
+            ,table = layui.table //表格
+            ,element = layui.element //元素操作
+            ,form=layui.form;
+
+        $.ajax({
+            type:"get",
+            url:"speaker/query2.do",
+            dataType:"json",
+            success:function(data){
+                if(data.code == 0){
+                    var infos = data.info
+                    $(infos).each(function () {
+                        var html = '<option value="' + this.speakerName + '">' + this.speakerName + '</option>'
+                        $("#sid").append($(html))
+
+                    })
+                    form.render()
+                }else{
+                    layer.msg("获取数据异常");
+                }
+            }
+        })
+        $.ajax({
+            type:"get",
+            url:"course/query2.do",
+            dataType:"json",
+            success:function(data){
+                if(data.code == 0){
+                    var infos = data.info
+                    $(infos).each(function () {
+                        var html = '<option value="' + this.courseTitle+ '">' + this.courseTitle + '</option>'
+                        $("#cid").append($(html))
+
+                    })
+                    form.render()
+                }else{
+                    layer.msg("获取数据异常");
+                }
+            }
+        })
+
+        //执行一个 table 实例
+        table.render({
+            elem: '#demo'
+            ,id:"transferTable"
+            ,height: 240
+            ,width: 'full'
+            ,url: 'video/query.do' //数据接口
+            ,title: '视频表'
+            ,page: { //支持传入 laypage 组件的所有参数（某些参数除外，如：jump/elem） - 详见文档
+                layout: ['limit', 'count', 'prev', 'page', 'next', 'skip'] //自定义分页布局
+                //,curr: 5 //设定初始在第 5 页
+                //,groups: 1 //只显示 1 个连续页码
+                ,first: false //不显示首页
+                ,last: false //不显示尾页
+                ,limits:[5,10]
+
+            } //开启分页
+            ,cols: [[ //表头
+                {type: 'checkbox', fixed: 'left', filter:"test"}
+                ,{field: '', title: '序号', templet:'#xuhao', width:80, sort: true, fixed: 'left'}
+                //,{field: 'id', title: 'id',hide:true }
+                ,{field: 'title', title: '名称', width:150}
+                ,{field: 'detail', title: '介绍', width:200, }
+                ,{field: 'speakerName', title: '讲师', width:80}
+                ,{field: 'time', title: '时长', width:80}
+                ,{field: 'playNum', title: '播放次数', width:120}
+                ,{fixed: 'right',title: '操作', width: 165, align:'center', toolbar: '#barDemo'}
+
+            ]]
+        });
+
+
+        table.on('tool(test)', function(obj){ //注：tool 是工具条事件名，test 是 table 原始容器的属性 lay-filter="对应的值"
+            var data = obj.data //获得当前行数据
+                ,layEvent = obj.event; //获得 lay-event 对应的值
+            if(layEvent === 'del'){
+                layer.confirm('真的删除行么', function(index){
+                    obj.del(); //删除对应行（tr）的DOM结构
+                    layer.close(index);
+                    //向服务端发送删除指令
+                    $.ajax({
+                        type:"get",
+                        url:"video/delete.do?id=" + data.id,
+                        dataType:"json",
+                        success:function(data){
+                            if(data.code == 0){
+                                table.reload('demo');
+                            }else{
+                                alert(data.info);
+                            }
+                        }
+                    })
+                });
+            } else if(layEvent === 'edit'){
+                //layer.msg('编辑操作');
+                layer.open({
+                    type: 2 //此处以iframe举例
+                    , title: '修改员工'
+                    , area: ['450px', '400px']
+                    , content: 'update.html?id=' + data.id
+                })
+            }
+        });
+
+        var active = {
+            reload: function(){
+                //执行重载
+                table.reload('transferTable', {
+                    page: {
+                        curr: 1 //重新从第 1 页开始
+                    }
+                    ,where: { // 额外需要提交的参数
+                        title:$("#tid").val(),
+                        speakerName:$("#sid").val(),
+                        courseTitle:$("#cid").val(),
+                    }
+                });
+            }
+        };
+
+        $('.searchDiv .layui-btn').on('click', function(){
+            var type = $(this).data('type');
+            active[type] ? active[type].call(this) : '';
+        });
+
+        $('#btn').click(function () {
+            var checkStatus = table.checkStatus('transferTable'),
+                data = checkStatus.data;
+
+            if (data == "") {
+                layer.msg('至少选择一个', {icon: 2});
+                return;
+            }
+            var ids = "";
+            if (data.length > 0) {
+                for (var i = 0; i < data.length; i++) {
+                    ids += data[i].id + ",";
+                }
+            }
+            layer.confirm('确认删除吗？' + ids, function (index) {
+                $.ajax({
+                    type: "post",
+                    url: "video/deleteAll.do",
+                    data: {"ids": ids},
+                    success: function (data) {
+                        alert("Data Saved:" + msg);
+
+                    }
+                });
+                table.reload('transferTable');
+                layer.msg('删除成功!', {icon: 1});
+                $(".layui-form-checked").not('.header').parents('tr').remove();
+            })
+            table.reload('transferTable');
+
+        });
+
+    })
+</script>
+<script type="text/html" id="xuhao">
+    {{d.LAY_TABLE_INDEX+1}}
+</script>
+
+<script type="text/javascript">
+    function add(){
+        layer.open({
+            type: 2 //此处以iframe举例
+            , title: '添加员工'
+            , area: ['450px', '400px']
+            , content: 'add.html'
+        })
+    }
+
+</script>
+</body>
+</html>
+

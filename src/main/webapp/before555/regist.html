@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>注册</title>
+		<link rel="stylesheet" href="css/base.css">
+		<link rel="stylesheet" href="css/css.css">
+		<link rel="icon" href="favicon.png" type="image/png" />
+		 <script src="js/jquery-1.12.4.min.js"></script>
+		<script src="js/gVerify.js"></script>
+	</head>
+	<body>
+		 <!-- <div class="mask hidden" id="reg"> -->
+		    <div class="mask_content">
+		        <div class="mask_content_header">
+		            <img src="img/logo.png" alt="" class="ma">
+		        </div>
+		        <div class="mask_content_body">
+		            <form id="regForm" action="" onsubmit="return false;">
+		                <h3>新用户注册</h3>
+		                <input type="email" id="regEmail" placeholder="请输入邮箱" name="email"><span id="emailMsg"></span>
+		                <input type="password" id="regPsw" placeholder="请输入密码" name="password">
+		                <input type="password" id="regPswAgain" placeholder="请再次输入密码" name="pswagain"><span id="passMsg"></span>
+<!--		                <div id="yzm" class="form-inline">-->
+<!--		                    <input type="text" name="yzm" style="width: 45%; display: inline-block;">-->
+<!--		                    <div id="v_container" style="width: 45%;height: 40px;float:right;"></div>-->
+<!--		                </div>-->
+		                <input type="submit"  value="注&#x3000;册">
+		            </form>
+		        </div>
+		        <div class="mask_content_footer">
+		            <span id="reg_close"><a href="index.html">关&#x3000;闭</a></span>
+		        </div>
+		    </div>
+		<!-- </div> -->
+		 <script type="text/javascript">
+			 $("form").submit(function () {
+				 $.ajax({
+					 type:"get",
+					 url:"/video/user/regist.do",
+					 data:$("form").serialize(),
+					 dataType:"json",
+					 success:function (data) {
+						 if (data.code==1){
+
+							 window.location.href="/video/before555/login.html"
+						 } else {
+							 alert(data.info)
+						 }
+					 }
+				 })
+			 })
+		 </script>
+	</body>
+</html>

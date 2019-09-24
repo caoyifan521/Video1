@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+
+<configuration>
+
+    <!-- 设置别名 -->
+    <typeAliases>
+        <typeAlias type="com.lisa.entity.admin" alias="admin"></typeAlias>
+        <typeAlias type="com.lisa.vo.videoInfo" alias="videoInfo"></typeAlias>
+        <typeAlias type="com.lisa.vo.videoInfo2" alias="videoInfo2"></typeAlias>
+        <typeAlias type="com.lisa.vo.courseInfo" alias="courseInfo"></typeAlias>
+        <typeAlias type="com.lisa.entity.speaker" alias="speaker"></typeAlias>
+        <typeAlias type="com.lisa.entity.course" alias="course"></typeAlias>
+        <typeAlias type="com.lisa.entity.video" alias="video"></typeAlias>
+        <typeAlias type="com.lisa.entity.subject" alias="subject"></typeAlias>
+        <typeAlias type="com.lisa.entity.user" alias="user"></typeAlias>
+        <typeAlias type="com.lisa.vo.subjectInfo" alias="subjectInfo"></typeAlias>
+    </typeAliases>
+
+    <plugins>
+        <!-- com.github.pagehelper为PageHelper类所在包名 -->
+        <plugin interceptor="com.github.pagehelper.PageInterceptor">
+            <!-- 使用下面的方式配置参数，后面会有所有的参数介绍 -->
+            <property name="helperDialect" value="mysql"/>
+        </plugin>
+    </plugins>
+
+
+</configuration>
